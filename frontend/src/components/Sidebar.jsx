@@ -13,7 +13,16 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       label: 'Anfragen',
       subItems: [
         { id: 'new-request', label: 'Neue Anfrage' },
-        { id: 'history', label: 'Verlauf' }
+        { id: 'request-history', label: 'Verlauf' }
+      ]
+    },
+    {
+      id: 'conversations',
+      label: 'Unterhaltungen',
+      subItems: [
+        { id: 'website-chats', label: 'Websitechats' },
+        { id: 'emails-info', label: 'E-Mails (info@easeEstate.com)' },
+        { id: 'emails-phillip', label: 'E-Mails (phillip@growento.com)' }
       ]
     },
     {
