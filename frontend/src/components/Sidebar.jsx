@@ -1,30 +1,34 @@
 import React, { useState } from 'react'
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
-  // Menü auf/zu steuern
   const [openMenu, setOpenMenu] = useState(null)
 
-  const mainMenu = [
+  const topMenuItems = [
     {
       id: 'overview',
-      label: 'Übersicht',
-      subItems: ['Statistik', 'Berichte']
+      label: 'Übersicht'
     },
     {
       id: 'requests',
       label: 'Anfragen',
-      subItems: ['Neue Anfrage', 'Verlauf']
+      subItems: [
+        { id: 'new-request', label: 'Neue Anfrage' },
+        { id: 'history', label: 'Verlauf' }
+      ]
     },
     {
       id: 'tickets',
       label: 'Tickets',
-      subItems: ['Offene Tickets', 'Geschlossene Tickets']
+      subItems: [
+        { id: 'open-tickets', label: 'Offene Tickets' },
+        { id: 'closed-tickets', label: 'Geschlossene Tickets' }
+      ]
     }
   ]
 
-  const bottomMenu = [
+  const bottomMenuItems = [
     { id: 'dashboard', label: 'Dashboard' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'settings', label: 'Settings' }
   ]
 
   const toggleMenu = (id) => {
@@ -34,27 +38,42 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#f4f4f4' }}>
       
-      {/* Hauptmenü oben */}
+      {/* Top Menü */}
       <div style={{ padding: '1rem' }}>
-        {mainMenu.map(menu => (
-          <div key={menu.id} style={{ marginBottom: '0.5rem' }}>
+        {topMenuItems.map(item => (
+          <div key={item.id} style={{ marginBottom: '0.5rem' }}>
             <div
-              onClick={() => toggleMenu(menu.id)}
+              onClick={() => {
+                toggleMenu(item.id)
+                if (!item.subItems) setActiveTab(item.id)
+              }}
               style={{
                 padding: '1rem',
                 cursor: 'pointer',
-                backgroundColor: openMenu === menu.id ? '#ddd' : 'transparent',
+                backgroundColor: activeTab === item.id ? '#ddd' : 'transparent',
                 borderRadius: '8px'
               }}
             >
-              {menu.label}
+              {item.label}
             </div>
-            {/* SubItems ausklappen */}
-            {openMenu === menu.id && (
+
+            {/* SubItems */}
+            {openMenu === item.id && item.subItems && (
               <div style={{ marginLeft: '1rem', marginTop: '0.5rem' }}>
-                {menu.subItems.map((sub, index) => (
-                  <div key={index} style={{ padding: '0.5rem 1rem', cursor: 'pointer', fontSize: '0.9rem' }}>
-                    {sub}
+                {item.subItems.map(sub => (
+                  <div
+                    key={sub.id}
+                    onClick={() => setActiveTab(sub.id)}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      backgroundColor: activeTab === sub.id ? '#ddd' : 'transparent',
+                      borderRadius: '6px',
+                      marginBottom: '0.25rem'
+                    }}
+                  >
+                    {sub.label}
                   </div>
                 ))}
               </div>
@@ -63,28 +82,27 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         ))}
       </div>
 
-      {/* Leerer flexGrow Bereich */}
+      {/* Spacer */}
       <div style={{ flexGrow: 1 }}></div>
 
-      {/* Dashboard + Settings unten */}
+      {/* Bottom Menü */}
       <div style={{ padding: '1rem' }}>
-        {bottomMenu.map(tab => (
+        {bottomMenuItems.map(item => (
           <div
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            key={item.id}
+            onClick={() => setActiveTab(item.id)}
             style={{
               padding: '1rem',
               cursor: 'pointer',
-              backgroundColor: activeTab === tab.id ? '#ddd' : 'transparent',
-              marginBottom: '0.5rem',
-              borderRadius: '8px'
+              backgroundColor: activeTab === item.id ? '#ddd' : 'transparent',
+              borderRadius: '8px',
+              marginBottom: '0.5rem'
             }}
           >
-            {tab.label}
+            {item.label}
           </div>
         ))}
       </div>
-
     </div>
   )
 }
