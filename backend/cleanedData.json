@@ -1,7 +1,7 @@
 {
-  "conversationId": 33,
-  "senderName": "Phillip Rugullis",
-  "messageContent": "Dies ist ein Test",
+  "conversationId": 38,
+  "senderName": "Phillip Rugullsi",
+  "messageContent": "Das ist eine weiter Testnachricht\n",
   "channel": "Channel::WebWidget",
-  "timestamp": "2025-04-28T16:29:22.715Z"
+  "timestamp": "2025-04-28T20:38:26.477Z"
 }

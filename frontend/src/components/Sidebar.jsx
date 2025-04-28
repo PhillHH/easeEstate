@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+const Sidebar = ({ activeTab, setActiveTab, setActiveSource }) => { // <-- setActiveSource hinzugefügt
   const [openMenu, setOpenMenu] = useState(null)
 
   const topMenuItems = [
@@ -20,9 +20,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       id: 'conversations',
       label: 'Unterhaltungen',
       subItems: [
-        { id: 'website-chats', label: 'Websitechats' },
-        { id: 'emails-info', label: 'E-Mails (info@easeEstate.com)' },
-        { id: 'emails-phillip', label: 'E-Mails (phillip@growento.com)' }
+        { id: 'website-chats', label: 'Websitechats', source: 'Websitechat' }, // <-- Quelle an SubItems anhängen
+        { id: 'emails-info', label: 'E-Mails (info@easeEstate.com)', source: 'E-Mail' },
+        { id: 'emails-phillip', label: 'E-Mails (phillip@growento.com)', source: 'E-Mail' }
       ]
     },
     {
@@ -72,7 +72,12 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                 {item.subItems.map(sub => (
                   <div
                     key={sub.id}
-                    onClick={() => setActiveTab(sub.id)}
+                    onClick={() => {
+                      setActiveTab(sub.id) // Tab wechseln
+                      if (sub.source) {
+                        setActiveSource(sub.source) // Quelle setzen, wenn vorhanden
+                      }
+                    }}
                     style={{
                       padding: '0.5rem 1rem',
                       cursor: 'pointer',

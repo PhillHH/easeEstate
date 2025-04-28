@@ -1,24 +1,19 @@
-const ChannelSidebar = ({ channels, activeChannel, setActiveChannel, activeSource }) => {
-    // Hilfsfunktion: Initialen aus dem Titel ziehen
-    const getInitials = (name) => {
-      if (!name) return '??'
-      const parts = name.split(' ')
-      const initials = parts.map(p => p[0].toUpperCase()).join('')
-      return initials.slice(0, 2) // Nur 2 Buchstaben
-    }
+const ChannelSidebar = ({ channels, activeChannel, setActiveChannel, activeSource, messages }) => {
+    // Nur Channels der aktuellen Quelle anzeigen
+    const filteredChannels = channels.filter(channel => channel.source === activeSource)
   
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         
-        {/* Bereichsüberschrift */}
+        {/* Überschrift (aktiver Bereich, z.B. Websitechats oder E-Mail) */}
         <div style={{ padding: '1rem', fontWeight: 'bold', fontSize: '1.2rem', borderBottom: '1px solid #ccc' }}>
           {activeSource || 'Kanal'}
         </div>
   
         {/* Channel-Liste */}
         <div style={{ flexGrow: 1, overflowY: 'auto' }}>
-          {channels.length > 0 ? (
-            channels.map(channel => (
+          {filteredChannels.length > 0 ? (
+            filteredChannels.map(channel => (
               <div
                 key={channel.id}
                 onClick={() => setActiveChannel(channel.id)}
@@ -32,7 +27,7 @@ const ChannelSidebar = ({ channels, activeChannel, setActiveChannel, activeSourc
                   transition: 'background-color 0.2s'
                 }}
               >
-                {/* Avatar */}
+                {/* Avatar mit Initialen */}
                 <div style={{
                   width: '40px',
                   height: '40px',
@@ -46,7 +41,7 @@ const ChannelSidebar = ({ channels, activeChannel, setActiveChannel, activeSourc
                   marginRight: '1rem',
                   fontSize: '1rem'
                 }}>
-                  {getInitials(channel.title)}
+                  {channel.title ? channel.title.slice(0, 2).toUpperCase() : '??'}
                 </div>
   
                 {/* Name */}

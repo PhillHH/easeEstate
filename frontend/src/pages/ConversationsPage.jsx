@@ -5,31 +5,54 @@ import ChannelSidebar from '../components/ChannelSidebar'
 import ChatWindow from '../components/ChatWindow'
 
 const ConversationsPage = () => {
-  const [channels, setChannels] = useState([])
+  // State für alle Channels
+  const [channels, setChannels] = useState(() => {
+    const storedChannels = localStorage.getItem('channels')
+    return storedChannels ? JSON.parse(storedChannels) : []
+  })
+
+  // State für alle Nachrichten
+  const [messages, setMessages] = useState(() => {
+    const storedMessages = localStorage.getItem('messages')
+    return storedMessages ? JSON.parse(storedMessages) : []
+  })
+
+  // Aktiver Channel (welcher Chat wird gerade angezeigt?)
   const [activeChannel, setActiveChannel] = useState(null)
-  const [messages, setMessages] = useState([])
+
+  // Aktive Quelle (Websitechat, E-Mail usw.)
+  const [activeSource, setActiveSource] = useState('Websitechat') // Standardmäßig Websitechats
 
   useEffect(() => {
     const socket = io('http://20.51.155.134:5000') // Deine Backend-URL
 
     socket.on('new-message', (data) => {
-      console.log('Neue Nachricht empfangen:', data) // <-- Debug-Log
+      console.log('Neue Nachricht empfangen:', data)
 
-      const { conversationId, senderName, messageContent } = data
+      const { conversationId, senderName, messageContent, channel } = data
 
-      // Channels aktualisieren
+      // Quelle aus Channel-Info bestimmen
+      const source = channel === 'Channel::Email' ? 'E-Mail' : 'Websitechat'
+
+      // Channel aktualisieren oder anlegen
       setChannels(prevChannels => {
         const exists = prevChannels.find(c => c.id === conversationId)
         if (!exists) {
-          return [...prevChannels, { id: conversationId, title: senderName || 'Unbekannter Kunde' }]
+          const updatedChannels = [...prevChannels, { id: conversationId, title: senderName || 'Unbekannter Kunde', source }]
+          localStorage.setItem('channels', JSON.stringify(updatedChannels))
+          return updatedChannels
         }
         return prevChannels
       })
 
       // Nachrichten aktualisieren
-      setMessages(prevMessages => [...prevMessages, { chatId: conversationId, content: messageContent }])
+      setMessages(prevMessages => {
+        const updatedMessages = [...prevMessages, { chatId: conversationId, content: messageContent }]
+        localStorage.setItem('messages', JSON.stringify(updatedMessages))
+        return updatedMessages
+      })
 
-      // Falls noch kein aktiver Channel: auf den ersten springen
+      // Falls noch kein aktiver Chat: den ersten setzen
       if (!activeChannel) {
         setActiveChannel(conversationId)
       }
@@ -38,22 +61,24 @@ const ConversationsPage = () => {
     return () => socket.disconnect()
   }, [activeChannel])
 
-  // Nachrichten für aktiven Channel filtern
+  // Nachrichten für den aktiven Chat filtern
   const filteredMessages = messages.filter(msg => msg.chatId === activeChannel)
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
       
-      {/* Channel Sidebar */}
+      {/* Channel Sidebar (zweite Sidebar) */}
       <div style={{ width: '250px', borderRight: '1px solid #ccc' }}>
         <ChannelSidebar
           channels={channels}
           activeChannel={activeChannel}
           setActiveChannel={setActiveChannel}
+          activeSource={activeSource}
+          messages={messages}
         />
       </div>
 
-      {/* Chat Window */}
+      {/* Nachrichtenanzeige */}
       <div style={{ flexGrow: 1, padding: '1rem' }}>
         <ChatWindow
           messages={filteredMessages}

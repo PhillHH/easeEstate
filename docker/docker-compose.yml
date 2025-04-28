@@ -3,7 +3,10 @@ version: "3.9"
 services:
 
   chatwoot:
-    image: chatwoot/chatwoot:latest
+    build:
+      context: ../services/chatwoot/
+      dockerfile: docker/Dockerfile
+      target: development
     env_file:
       - ../services/chatwoot/.env
     ports:
@@ -17,7 +20,9 @@ services:
       - internal
 
   sidekiq:
-    image: chatwoot/chatwoot:latest
+    build:
+      context: ../services/chatwoot/
+      dockerfile: docker/Dockerfile
     depends_on:
       - postgres
       - redis

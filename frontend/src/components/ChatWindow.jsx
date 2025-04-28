@@ -2,9 +2,9 @@ const ChatWindow = ({ messages, activeChannel }) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto', backgroundColor: '#ffffff', padding: '1rem' }}>
         
-        {/* Header oben */}
+        {/* Header */}
         <div style={{ marginBottom: '1rem', fontWeight: 'bold', fontSize: '1.5rem' }}>
-          {activeChannel ? `Chat: ${activeChannel}` : 'Bitte eine Unterhaltung auswählen'}
+          {activeChannel ? `Chat ID: ${activeChannel}` : 'Bitte eine Unterhaltung auswählen'}
         </div>
   
         {/* Nachrichtenbereich */}
