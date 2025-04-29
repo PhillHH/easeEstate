@@ -2,7 +2,7 @@ import React from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 
-const MainLayout = ({ activeTab, setActiveTab, setActiveSource, children }) => { // <-- setActiveSource hinzugefügt!
+const MainLayout = ({ activeTab, setActiveTab, activeSource, setActiveSource, children }) => { // <-- setActiveSource hinzugefügt!
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
       
