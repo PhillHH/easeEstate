@@ -1,17 +1,44 @@
-function cleanWebhookData(webhookData) {
-    // Loggen des kompletten webhookData zum Testen
-    console.log('Webhook Data:');
-    console.log(JSON.stringify(webhookData, null, 2));
-  
+// Diese Funktion bereinigt die empfangenen Webhook-Daten, je nach Quelle (email oder webchat)
+
+function cleanWebhookData(data, type = 'fallback') {
+  const conversationId = data.conversation?.id || data.id;
+  const timestamp = data.created_at || new Date().toISOString();
+
+  if (type === 'email') {
+    const emailData = data.content_attributes?.email || {};
+
     return {
-      conversationId: webhookData.conversation?.id,
-      senderName: webhookData.sender?.name,
-      messageContent: webhookData.content,
-      // Korrekte Referenz zum Channel
-      channel: webhookData.conversation?.channel || 'No channel found',  // Fallback, falls channel undefined ist
-      timestamp: webhookData.created_at
+      conversationId,
+      senderName: data.sender?.name || 'Unbekannt',
+      senderEmail: emailData.from?.[0] || null,
+      recipientEmail: emailData.to?.[0] || null,
+      subject: emailData.subject || '(kein Betreff)',
+      messageContent: emailData.text_content?.full || data.content,
+      messageId: emailData.message_id || null,
+      date: emailData.date || timestamp,
+      timestamp,
+      channel: data.channel || 'Channel::Email',
     };
   }
-  
-  module.exports = { cleanWebhookData };
-  
+
+  if (type === 'webchat') {
+    return {
+      conversationId,
+      senderName: data.sender?.name || 'Unbekannt',
+      messageContent: data.content,
+      timestamp,
+      channel: data.channel || 'Channel::WebWidget',
+    };
+  }
+
+  // Fallback
+  return {
+    conversationId,
+    senderName: data.sender?.name || 'Unbekannt',
+    messageContent: data.content,
+    timestamp,
+    channel: data.channel || 'unbekannt',
+  };
+}
+
+module.exports = { cleanWebhookData };
