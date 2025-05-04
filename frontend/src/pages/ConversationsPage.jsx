@@ -4,7 +4,6 @@ import { io } from 'socket.io-client'
 import ChannelSidebar from '../components/ChannelSidebar'
 import ChatWindow from '../components/ChatWindow'
 import EmailChannel from '../components/EmailChannel'
-import WebChatArea from '../components/WebChatArea'
 
 // ConversationsPage empfängt den aktiven Kommunikationskanal (z. B. "E-Mail" oder "Websitechat") von außen
 const ConversationsPage = ({ activeSource }) => {
@@ -112,10 +111,7 @@ const ConversationsPage = ({ activeSource }) => {
         {activeSource === 'E-Mail' ? (
           <EmailChannel messages={filteredMessages} />
         ) : (
-          <WebChatArea
-            messages={filteredMessages}
-            activeChannel={activeChannel}
-          />
+          <ChatWindow messages={filteredMessages} activeChannel={activeChannel} />
         )}
       </div>
     </div>
