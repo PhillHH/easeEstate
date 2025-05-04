@@ -1,43 +1,41 @@
 // Diese Funktion bereinigt die empfangenen Webhook-Daten, je nach Quelle (email oder webchat)
 
 function cleanWebhookData(data, type = 'fallback') {
-  const conversationId = data.conversation?.id || data.id;
-  const timestamp = data.created_at || new Date().toISOString();
+  const message = data.message || data; // Nutze message direkt, falls vorhanden (Chatwoot-Format)
+  const conversationId = message.conversation_id || data.conversation?.id || data.id;
+  const timestamp = message.created_at || data.created_at || new Date().toISOString();
 
   if (type === 'email') {
-    const emailData = data.content_attributes?.email || {};
+    const emailData = message.content_attributes?.email || {};
 
     return {
       conversationId,
-      senderName: data.sender?.name || 'Unbekannt',
-      senderEmail: emailData.from?.[0] || null,
-      recipientEmail: emailData.to?.[0] || null,
+      senderName: message.sender?.name || emailData.from?.[0] || 'Unbekannt',
+      email: emailData.from?.[0] || null,
       subject: emailData.subject || '(kein Betreff)',
-      messageContent: emailData.text_content?.full || data.content,
-      messageId: emailData.message_id || null,
-      date: emailData.date || timestamp,
-      timestamp,
-      channel: data.channel || 'Channel::Email',
+      messageContent: emailData.text_content?.full || message.content,
+      timestamp: emailData.date || timestamp,
+      channel: data.channel || message.channel || 'Channel::Email',
     };
   }
 
   if (type === 'webchat') {
     return {
       conversationId,
-      senderName: data.sender?.name || 'Unbekannt',
-      messageContent: data.content,
+      senderName: message.sender?.name || 'Unbekannt',
+      messageContent: message.content,
       timestamp,
-      channel: data.channel || 'Channel::WebWidget',
+      channel: message.channel || 'Channel::WebWidget',
     };
   }
 
   // Fallback
   return {
     conversationId,
-    senderName: data.sender?.name || 'Unbekannt',
-    messageContent: data.content,
+    senderName: message.sender?.name || 'Unbekannt',
+    messageContent: message.content,
     timestamp,
-    channel: data.channel || 'unbekannt',
+    channel: message.channel || 'unbekannt',
   };
 }
 

@@ -3,94 +3,113 @@ import { io } from 'socket.io-client'
 
 import ChannelSidebar from '../components/ChannelSidebar'
 import ChatWindow from '../components/ChatWindow'
+import EmailChannel from '../components/EmailChannel'
 
-// ✅ activeSource wird als Prop von außen übergeben
+// ConversationsPage empfängt den aktiven Kommunikationskanal (z. B. "E-Mail" oder "Websitechat") von außen
 const ConversationsPage = ({ activeSource }) => {
-  // State für Channels (z. B. Websitechats, E-Mails etc.)
   const [channels, setChannels] = useState(() => {
     const storedChannels = localStorage.getItem('channels')
     return storedChannels ? JSON.parse(storedChannels) : []
   })
 
-  // State für Nachrichten
   const [messages, setMessages] = useState(() => {
     const storedMessages = localStorage.getItem('messages')
     return storedMessages ? JSON.parse(storedMessages) : []
   })
 
-  // Aktiver Channel (zeigt welche Unterhaltung geöffnet ist)
   const [activeChannel, setActiveChannel] = useState(null)
 
-  useEffect(() => {
-    const socket = io('http://20.51.155.134:5000') // Deine echte Serveradresse
+  // Hilfsfunktion zur Verarbeitung eingehender Nachrichten
+  const handleIncomingMessage = (data) => {
+    const { conversationId, senderName, messageContent, channel } = data
 
-    socket.on('new-message', (data) => {
-      console.log('Neue Nachricht empfangen:', data)
+    // Quelle aus channel oder Fallback auf aktiven Tab ableiten
+    let source = 'Websitechat'
+    if (channel === 'Channel::Email') source = 'E-Mail'
+    if (!channel && activeSource === 'E-Mail') source = 'E-Mail'
 
-      const { conversationId, senderName, messageContent, channel } = data
-
-      // Quelle bestimmen (z. B. Websitechat oder E-Mail)
-      const source = channel === 'Channel::Email' ? 'E-Mail' : 'Websitechat'
-
-      // Channel anlegen (nur wenn nicht schon vorhanden)
-      setChannels(prevChannels => {
-        const exists = prevChannels.find(c => c.id === conversationId)
-        if (!exists) {
-          const updated = [...prevChannels, {
-            id: conversationId,
-            title: senderName || 'Unbekannter Kunde',
-            source
-          }]
-          localStorage.setItem('channels', JSON.stringify(updated))
-          return updated
-        }
-        return prevChannels
-      })
-
-      // Nachricht speichern
-      setMessages(prevMessages => {
-        const updated = [...prevMessages, {
-          chatId: conversationId,
-          content: messageContent
+    // Neuen Channel hinzufügen, wenn nicht vorhanden
+    setChannels(prev => {
+      const exists = prev.find(c => c.id === conversationId)
+      if (!exists) {
+        const updated = [...prev, {
+          id: conversationId,
+          title: senderName || 'Unbekannter Kunde',
+          source
         }]
-        localStorage.setItem('messages', JSON.stringify(updated))
+        localStorage.setItem('channels', JSON.stringify(updated))
         return updated
-      })
-
-      // Falls kein aktiver Channel gesetzt ist → diesen setzen
-      if (!activeChannel) {
-        setActiveChannel(conversationId)
       }
+      return prev
+    })
+
+    // Nachricht zur Unterhaltung hinzufügen
+    setMessages(prev => {
+      const updated = [...prev, {
+        chatId: conversationId,
+        content: messageContent,
+        sender: senderName,
+        email: data.email,
+        subject: data.subject,
+        timestamp: data.timestamp
+      }]
+      localStorage.setItem('messages', JSON.stringify(updated))
+      return updated
+    })
+
+    // Erstinitialisierung des aktiven Chats
+    if (!activeChannel) {
+      setActiveChannel(conversationId)
+    }
+  }
+
+  useEffect(() => {
+    const socket = io('http://20.51.155.134:5000')
+
+    // Nachrichten aus dem Website-Chat
+    socket.on('new-message', (data) => {
+      console.log('Websitechat empfangen:', data)
+      handleIncomingMessage(data)
+    })
+
+    // Nachrichten aus dem E-Mail-Kanal
+    socket.on('new-email-message', (data) => {
+      console.log('Neue E-Mail empfangen:', data)
+      handleIncomingMessage(data)
     })
 
     return () => socket.disconnect()
-  }, [activeChannel])
+  }, [activeChannel, activeSource])
 
   // Nachrichten für den aktuell ausgewählten Chat filtern
   const filteredMessages = messages.filter(msg => msg.chatId === activeChannel)
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
-      
       {/* ChannelSidebar: zeigt Kontakte & Titel je nach Quelle */}
       <div style={{ width: '250px', borderRight: '1px solid #ccc' }}>
         <ChannelSidebar
           channels={channels}
           activeChannel={activeChannel}
           setActiveChannel={setActiveChannel}
-          activeSource={activeSource} // ✅ von außen erhalten
+          activeSource={activeSource}
           messages={messages}
         />
       </div>
 
-      {/* Chat-Fenster rechts */}
+      {/* Nachrichtenansicht – E-Mail oder Websitechat */}
       <div style={{ flexGrow: 1, padding: '1rem' }}>
-        <ChatWindow
-          messages={filteredMessages}
-          activeChannel={activeChannel}
-        />
+        {activeSource === 'E-Mail' ? (
+          <EmailChannel
+            messages={filteredMessages}
+          />
+        ) : (
+          <ChatWindow
+            messages={filteredMessages}
+            activeChannel={activeChannel}
+          />
+        )}
       </div>
-
     </div>
   )
 }

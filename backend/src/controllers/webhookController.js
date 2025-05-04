@@ -46,13 +46,22 @@ async function handleChatwootWebhook(req, res, io) {
     });
 
     // Per WebSocket an Frontend schicken
-    
     if (cleanedData.channel === 'Channel::Email') {
-      io.emit('new-email-message', cleanedData);
+      console.log('📤 Sende WebSocket Event: new-email-message');
+      io.emit('new-email-message', {
+        conversationId: cleanedData.conversationId,
+        senderName: cleanedData.senderName,
+        email: cleanedData.email,
+        subject: cleanedData.subject,
+        messageContent: cleanedData.messageContent,
+        timestamp: cleanedData.timestamp,
+        channel: cleanedData.channel
+      });
     } else {
-      io.emit('new-message', cleanedData); // für Webchat und andere Kanäle
+      console.log('📤 Sende WebSocket Event: new-message');
+      io.emit('new-message', cleanedData); // Für Webchat und andere Kanäle
     }
-    
+
     res.status(200).send('Webhook verarbeitet');
   } catch (error) {
     console.error('Fehler beim Verarbeiten des Webhooks:', error.message);
