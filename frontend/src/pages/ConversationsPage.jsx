@@ -4,6 +4,7 @@ import { io } from 'socket.io-client'
 import ChannelSidebar from '../components/ChannelSidebar'
 import ChatWindow from '../components/ChatWindow'
 import EmailChannel from '../components/EmailChannel'
+import WebChatArea from '../components/WebChatArea'
 
 // ConversationsPage empfängt den aktiven Kommunikationskanal (z. B. "E-Mail" oder "Websitechat") von außen
 const ConversationsPage = ({ activeSource }) => {
@@ -19,31 +20,41 @@ const ConversationsPage = ({ activeSource }) => {
 
   const [activeChannel, setActiveChannel] = useState(null)
 
-  // Hilfsfunktion zur Verarbeitung eingehender Nachrichten
+  // Nachrichten verarbeiten und richtigen Channel zuordnen
   const handleIncomingMessage = (data) => {
     const { conversationId, senderName, messageContent, channel } = data
 
-    // Quelle aus channel oder Fallback auf aktiven Tab ableiten
+    // Quelle eindeutig bestimmen
     let source = 'Websitechat'
-    if (channel === 'Channel::Email') source = 'E-Mail'
-    if (!channel && activeSource === 'E-Mail') source = 'E-Mail'
+    if (channel === 'Channel::Email') {
+      source = 'E-Mail'
+    } else if (channel === 'Channel::WebWidget') {
+      source = 'Websitechat'
+    }
 
-    // Neuen Channel hinzufügen, wenn nicht vorhanden
+    // Channel aktualisieren oder neu hinzufügen
     setChannels(prev => {
-      const exists = prev.find(c => c.id === conversationId)
-      if (!exists) {
-        const updated = [...prev, {
+      const updated = [...prev]
+      const existingIndex = updated.findIndex(c => c.id === conversationId)
+
+      if (existingIndex === -1) {
+        updated.push({
           id: conversationId,
           title: senderName || 'Unbekannter Kunde',
-          source
-        }]
-        localStorage.setItem('channels', JSON.stringify(updated))
-        return updated
+          source,
+        })
+      } else {
+        // Quelle ggf. nachtragen oder korrigieren
+        if (!updated[existingIndex].source || updated[existingIndex].source !== source) {
+          updated[existingIndex].source = source
+        }
       }
-      return prev
+
+      localStorage.setItem('channels', JSON.stringify(updated))
+      return updated
     })
 
-    // Nachricht zur Unterhaltung hinzufügen
+    // Nachricht hinzufügen
     setMessages(prev => {
       const updated = [...prev, {
         chatId: conversationId,
@@ -51,13 +62,13 @@ const ConversationsPage = ({ activeSource }) => {
         sender: senderName,
         email: data.email,
         subject: data.subject,
-        timestamp: data.timestamp
+        timestamp: data.timestamp,
       }]
       localStorage.setItem('messages', JSON.stringify(updated))
       return updated
     })
 
-    // Erstinitialisierung des aktiven Chats
+    // Falls noch kein aktiver Chat gewählt wurde
     if (!activeChannel) {
       setActiveChannel(conversationId)
     }
@@ -66,30 +77,30 @@ const ConversationsPage = ({ activeSource }) => {
   useEffect(() => {
     const socket = io('http://20.51.155.134:5000')
 
-    // Nachrichten aus dem Website-Chat
     socket.on('new-message', (data) => {
       console.log('Websitechat empfangen:', data)
       handleIncomingMessage(data)
     })
 
-    // Nachrichten aus dem E-Mail-Kanal
     socket.on('new-email-message', (data) => {
       console.log('Neue E-Mail empfangen:', data)
       handleIncomingMessage(data)
     })
 
     return () => socket.disconnect()
-  }, [activeChannel, activeSource])
+  }, [activeChannel])
 
-  // Nachrichten für den aktuell ausgewählten Chat filtern
+  // Nachrichten nach aktivem Channel filtern
   const filteredMessages = messages.filter(msg => msg.chatId === activeChannel)
+
+  // Channels vorfiltern je nach Quelle (Websitechat oder E-Mail)
+  const filteredChannels = channels.filter(channel => channel.source === activeSource)
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
-      {/* ChannelSidebar: zeigt Kontakte & Titel je nach Quelle */}
       <div style={{ width: '250px', borderRight: '1px solid #ccc' }}>
         <ChannelSidebar
-          channels={channels}
+          channels={filteredChannels}
           activeChannel={activeChannel}
           setActiveChannel={setActiveChannel}
           activeSource={activeSource}
@@ -97,14 +108,11 @@ const ConversationsPage = ({ activeSource }) => {
         />
       </div>
 
-      {/* Nachrichtenansicht – E-Mail oder Websitechat */}
       <div style={{ flexGrow: 1, padding: '1rem' }}>
         {activeSource === 'E-Mail' ? (
-          <EmailChannel
-            messages={filteredMessages}
-          />
+          <EmailChannel messages={filteredMessages} />
         ) : (
-          <ChatWindow
+          <WebChatArea
             messages={filteredMessages}
             activeChannel={activeChannel}
           />

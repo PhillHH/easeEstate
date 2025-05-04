@@ -45,6 +45,9 @@ async function handleChatwootWebhook(req, res, io) {
       }
     });
 
+    // Kontrollausgabe zur Prüfung der Struktur
+    console.log('📤 Socket-Daten werden gesendet:', JSON.stringify(cleanedData, null, 2));
+
     // Per WebSocket an Frontend schicken
     if (cleanedData.channel === 'Channel::Email') {
       console.log('📤 Sende WebSocket Event: new-email-message');

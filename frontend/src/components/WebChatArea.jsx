@@ -6,7 +6,8 @@ const ChatArea = () => {
   const [messages, setMessages] = useState({}) // Nachrichten nach Conversation-ID
 
   useEffect(() => {
-    const socket = new WebSocket('ws://your-middleware-server/ws')
+    const socket = new WebSocket('ws://20.51.155.134:5000/ws')
+
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)

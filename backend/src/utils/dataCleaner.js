@@ -1,41 +1,43 @@
 // Diese Funktion bereinigt die empfangenen Webhook-Daten, je nach Quelle (email oder webchat)
 
 function cleanWebhookData(data, type = 'fallback') {
-  const message = data.message || data; // Nutze message direkt, falls vorhanden (Chatwoot-Format)
-  const conversationId = message.conversation_id || data.conversation?.id || data.id;
-  const timestamp = message.created_at || data.created_at || new Date().toISOString();
+  const conversationId = data.conversation?.id || data.id;
+  const timestamp = data.created_at || new Date().toISOString();
+
+  // 🛠️ Sichere Kanal-Erkennung
+  const detectedChannel = data.channel || data.conversation?.channel || 'unbekannt';
 
   if (type === 'email') {
-    const emailData = message.content_attributes?.email || {};
+    const emailData = data.content_attributes?.email || {};
 
     return {
       conversationId,
-      senderName: message.sender?.name || emailData.from?.[0] || 'Unbekannt',
+      senderName: data.sender?.name || emailData.from?.[0] || 'Unbekannt',
       email: emailData.from?.[0] || null,
       subject: emailData.subject || '(kein Betreff)',
-      messageContent: emailData.text_content?.full || message.content,
+      messageContent: emailData.text_content?.full || data.content,
       timestamp: emailData.date || timestamp,
-      channel: data.channel || message.channel || 'Channel::Email',
+      channel: 'Channel::Email', // ✅ Fest gesetzt
     };
   }
 
   if (type === 'webchat') {
     return {
       conversationId,
-      senderName: message.sender?.name || 'Unbekannt',
-      messageContent: message.content,
+      senderName: data.sender?.name || 'Unbekannt',
+      messageContent: data.content,
       timestamp,
-      channel: message.channel || 'Channel::WebWidget',
+      channel: 'Channel::WebWidget', // ✅ Fest gesetzt
     };
   }
 
   // Fallback
   return {
     conversationId,
-    senderName: message.sender?.name || 'Unbekannt',
-    messageContent: message.content,
+    senderName: data.sender?.name || 'Unbekannt',
+    messageContent: data.content,
     timestamp,
-    channel: message.channel || 'unbekannt',
+    channel: detectedChannel, // Besser als 'unbekannt'
   };
 }
 

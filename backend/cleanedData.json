@@ -1,7 +1,7 @@
 {
-  "conversationId": 53,
+  "conversationId": 66,
   "senderName": "Jonathan von Bargen",
-  "messageContent": "Das ist ein TEST",
-  "timestamp": "2025-05-03T22:34:17.958Z",
-  "channel": "unbekannt"
+  "messageContent": "Ich freu mich so",
+  "timestamp": "2025-05-04T12:31:31.380Z",
+  "channel": "Channel::Email"
 }
