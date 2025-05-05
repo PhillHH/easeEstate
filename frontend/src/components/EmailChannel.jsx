@@ -1,6 +1,12 @@
-import { PrimaryButton, MessageContainer } from '../components/ui'
+// src/components/EmailChannel.jsx
+import { MessageContainer, TicketButton } from './ui'
+import { createTicketFromConversation } from '../services/ticketService'
 
-const EmailChannel = ({ messages, activeChannel, handleCreateTicket }) => {
+/**
+ * Stellt E-Mail-Konversationen dar, inklusive Nachrichtenverlauf
+ * und Ticket-Erstellung per globalem Button
+ */
+const EmailChannel = ({ messages, activeChannel }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <h2 style={{ marginBottom: '1rem' }}>E-Mail-Konversation</h2>
@@ -23,13 +29,9 @@ const EmailChannel = ({ messages, activeChannel, handleCreateTicket }) => {
         )}
       </MessageContainer>
 
-      {/* Ticket erstellen Button */}
+      {/* 🎟️ Ticket erstellen über globale Komponente */}
       {activeChannel && (
-        <div style={{ textAlign: 'center' }}>
-          <PrimaryButton onClick={handleCreateTicket}>
-            🎟️ Ticket erstellen
-          </PrimaryButton>
-        </div>
+        <TicketButton activeChannel={activeChannel} source="E-Mail" />
       )}
     </div>
   )

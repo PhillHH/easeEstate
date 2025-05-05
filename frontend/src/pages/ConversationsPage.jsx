@@ -4,6 +4,8 @@ import { io } from 'socket.io-client'
 import ChannelSidebar from '../components/ChannelSidebar'
 import ChatWindow from '../components/ChatWindow'
 import EmailChannel from '../components/EmailChannel'
+import { createTicketFromConversation } from '../services/ticketService'
+
 
 // ConversationsPage empfängt den aktiven Kommunikationskanal (z. B. "E-Mail" oder "Websitechat") von außen
 const ConversationsPage = ({ activeSource }) => {
@@ -94,6 +96,22 @@ const ConversationsPage = ({ activeSource }) => {
 
   // Channels vorfiltern je nach Quelle (Websitechat oder E-Mail)
   const filteredChannels = channels.filter(channel => channel.source === activeSource)
+  const handleCreateTicket = async () => {
+    if (!activeChannel) return
+
+    const conversation = {
+      id: activeChannel,
+      title: `Chat ID ${activeChannel}`,
+      source: activeSource
+    }
+
+    try {
+      const ticket = await createTicketFromConversation(conversation)
+      alert(`Ticket erstellt mit ID: ${ticket.id || 'unbekannt'}`)
+    } catch (err) {
+      alert('Fehler beim Erstellen des Tickets')
+    }
+  }
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
@@ -108,12 +126,21 @@ const ConversationsPage = ({ activeSource }) => {
       </div>
 
       <div style={{ flexGrow: 1, padding: '1rem' }}>
-        {activeSource === 'E-Mail' ? (
-          <EmailChannel messages={filteredMessages} />
-        ) : (
-          <ChatWindow messages={filteredMessages} activeChannel={activeChannel} />
-        )}
-      </div>
+  {activeSource === 'E-Mail' ? (
+    <EmailChannel
+      messages={filteredMessages}
+      activeChannel={activeChannel}
+      onCreateTicket={handleCreateTicket}
+    />
+  ) : (
+    <ChatWindow
+      messages={filteredMessages}
+      activeChannel={activeChannel}
+      onCreateTicket={handleCreateTicket}
+    />
+  )}
+</div>
+
     </div>
   )
 }

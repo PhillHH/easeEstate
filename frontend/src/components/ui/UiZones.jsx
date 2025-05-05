@@ -1,18 +1,26 @@
 // Layout-Zonen für die Chatansicht, Nachrichtenbereich etc.
 
 export const MessageContainer = ({ children }) => (
-    <div style={{
+  <div
+    style={{
       overflowY: 'auto',
       flexGrow: 1,
       padding: '1rem',
       background: '#fafafa',
       border: '1px solid #ddd',
       borderRadius: '8px',
-      maxHeight: '60vh'
-    }}>
-      {children}
-    </div>
-  )
+      maxHeight: '60vh',
+      maxWidth: '800px',
+      width: '100%',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem'
+    }}
+  >
+    {children}
+  </div>
+)
   
   export const SectionBox = ({ children }) => (
     <div style={{
