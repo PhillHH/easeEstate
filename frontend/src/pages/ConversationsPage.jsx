@@ -75,21 +75,35 @@ const ConversationsPage = ({ activeSource }) => {
     }
   }
 
-  useEffect(() => {
-    const socket = io('http://20.51.155.134:5000')
+useEffect(() => {
+  // 📡 Verbindung zum Socket.io-Server herstellen
+  const socket = io('http://20.51.155.134:5000')
 
-    socket.on('new-message', (data) => {
-      console.log('Websitechat empfangen:', data)
-      handleIncomingMessage(data)
-    })
+  // Lauscht auf neue Websitechat-Nachrichten
+  socket.on('new-message', (data) => {
+    console.log('Websitechat empfangen:', data)
+    handleIncomingMessage(data)
+  })
 
-    socket.on('new-email-message', (data) => {
-      console.log('Neue E-Mail empfangen:', data)
-      handleIncomingMessage(data)
-    })
+  // Lauscht auf neue E-Mail-Nachrichten
+  socket.on('new-email-message', (data) => {
+    console.log('Neue E-Mail empfangen:', data)
+    handleIncomingMessage(data)
+  })
 
-    return () => socket.disconnect()
-  }, [activeChannel])
+  // Neuer Event-Listener für lokal erzeugte Nachrichten (z. B. über Antwort-Button)
+  const handleLocalMessage = () => {
+    const updated = JSON.parse(localStorage.getItem('messages')) || []
+    setMessages(updated)
+  }
+  window.addEventListener('new-local-message', handleLocalMessage)
+
+  // Aufräumen beim Verlassen der Komponente
+  return () => {
+    socket.disconnect()                             // Verbindung trennen
+    window.removeEventListener('new-local-message', handleLocalMessage)  // Event-Listener entfernen
+  }
+}, [activeChannel])  // Abhängig von aktivem Channel
 
   // Nachrichten nach aktivem Channel filtern
   const filteredMessages = messages.filter(msg => msg.chatId === activeChannel)

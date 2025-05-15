@@ -12,14 +12,19 @@ async function handleChatwootWebhook(req, res, io) {
     console.log(JSON.stringify(webhookData, null, 2));
 
     // Nur Nachrichten mit Typ 'incoming' verarbeiten
-    const messageType = webhookData.message_type;
-    if (messageType !== 'incoming') {
+    const messageType = webhookData.message_type ?? webhookData.messages?.[0]?.message_type;
+    if (messageType !== 'incoming' && messageType !== 0) {
       console.log(`Ignoriert: message_type ist ${messageType}`);
       return res.status(200).send('Nicht verarbeitet – kein incoming');
     }
 
-    // Kanaltyp bestimmen
-    const channel = webhookData.channel;
+    // Kanaltyp bestimmen (Fallback über conversation)
+    const channel =
+      webhookData.channel ||
+      webhookData.conversation?.channel ||
+      webhookData.messages?.[0]?.channel ||
+      'undefined';
+
     let cleanedData;
 
     if (channel === 'Channel::Email') {
@@ -62,7 +67,13 @@ async function handleChatwootWebhook(req, res, io) {
       });
     } else {
       console.log('📤 Sende WebSocket Event: new-message');
-      io.emit('new-message', cleanedData); // Für Webchat und andere Kanäle
+      io.emit('new-message', {
+        conversationId: cleanedData.conversationId,
+        senderName: cleanedData.senderName,
+        messageContent: cleanedData.messageContent,
+        timestamp: cleanedData.timestamp,
+        channel: cleanedData.channel
+      });
     }
 
     res.status(200).send('Webhook verarbeitet');

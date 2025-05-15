@@ -12,7 +12,8 @@ export const MessageContainer = ({ children }) => (
       maxHeight: '60vh',
       maxWidth: '800px',
       width: '100%',
-      margin: '0 auto',
+      marginLeft: '0',
+      marginRight: 'auto',
       display: 'flex',
       flexDirection: 'column',
       gap: '1rem'

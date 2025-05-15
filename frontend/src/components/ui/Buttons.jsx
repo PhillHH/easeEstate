@@ -1,6 +1,8 @@
 // src/components/ui/Buttons.jsx
 
+import { useState } from 'react'
 import { createTicketFromConversation } from '../../services/ticketService'
+import { sendReplyMessage } from '../../services/replyService'
 
 /**
  * Primärer Button mit Standard-Design
@@ -42,10 +44,85 @@ export const TicketButton = ({ activeChannel, source = 'Unbekannt' }) => {
   }
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+    <div style={{ textAlign: 'left', marginTop: '0rem' }}>
       <PrimaryButton onClick={handleClick}>
         🎟️ Ticket erstellen
       </PrimaryButton>
+    </div>
+  )
+}
+
+/**
+ * Antwort-Button mit Textfeld und Senden-Funktion
+ */
+export const ReplyButton = ({ activeChannel }) => {
+  const [visible, setVisible] = useState(false)
+  const [text, setText] = useState('')
+
+const handleSend = async () => {
+  if (!text.trim()) return alert('Bitte Text eingeben.')
+
+  // Neue Nachricht sofort lokal in localStorage speichern
+  const newMessage = {
+    chatId: activeChannel,
+    content: text,
+    sender: 'Du',
+    timestamp: new Date().toISOString(),
+    email: null,
+    subject: 'Antwort',
+  }
+
+  const messages = JSON.parse(localStorage.getItem('messages')) || []
+  messages.push(newMessage)
+  localStorage.setItem('messages', JSON.stringify(messages))
+// ⚠️ Neues Custom Event auslösen
+window.dispatchEvent(new Event('new-local-message'))
+
+
+  try {
+    // Danach über Middleware senden
+    await sendReplyMessage(activeChannel, text)
+    alert('Antwort gesendet')
+    setText('')
+    setVisible(false)
+  } catch (err) {
+    alert('Fehler beim Senden der Antwort')
+  }
+}
+
+
+  return (
+    <div style={{ flexGrow: 1 }}>
+      <PrimaryButton onClick={() => setVisible(!visible)}>
+        ✉️ Antworten
+      </PrimaryButton>
+
+      {visible && (
+        <div style={{ marginTop: '0.75rem' }}>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={4}
+            placeholder="Antwort eingeben..."
+            style={{
+              width: '100%',
+              maxWidth: '800px',
+              padding: '0.75rem',
+              fontSize: '1rem',
+              borderRadius: '6px',
+              border: '1px solid #ccc',
+              resize: 'vertical',
+              marginBottom: '0.5rem',
+              marginLeft: 0,
+              marginRight: 'auto', // ← linksbündig
+              display: 'block'
+            }}
+          />
+          <PrimaryButton onClick={handleSend}>
+            📤 Senden
+          </PrimaryButton>
+        </div>
+      )}
     </div>
   )
 }

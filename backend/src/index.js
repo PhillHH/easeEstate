@@ -3,8 +3,11 @@ const http = require('http');
 const cors = require('cors');
 require('dotenv').config();
 
+
+
 // Import der Route
 const webhookRoutes = require('./routes/webhookRoutes');
+const replyRoutes = require('./routes/replyRoutes')
 
 const app = express();
 const server = http.createServer(app);
@@ -28,6 +31,9 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('EaseEstate Backend läuft!');
 });
+
+// Antwort-Route einbinden
+app.use('/api', replyRoutes); // z. B. POST /api/reply
 
 // Webhook-Route einbinden
 app.use('/webhook', webhookRoutes(io)); // io wird weitergereicht an die Route
