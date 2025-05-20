@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { createTicketFromConversation } from '../../services/ticketService'
+import TicketPopup from './TicketPopup' 
+import { Button } from './button' // shadcn-Komponente
 import { sendReplyMessage } from '../../services/replyService'
 
 /**
@@ -23,31 +25,24 @@ export const GhostButton = ({ children, onClick, ...props }) => (
 )
 
 /**
- * Globale Ticket-Button-Komponente, die API-Aufruf kapselt
+ *  * Globale Ticket-Button-Komponente mit shadcn-Popup
  */
 export const TicketButton = ({ activeChannel, source = 'Unbekannt' }) => {
-  const handleClick = async () => {
-    if (!activeChannel) return
-
-    const conversation = {
-      id: activeChannel,
-      title: `Chat ID ${activeChannel}`,
-      source: source,
-    }
-
-    try {
-      const ticket = await createTicketFromConversation(conversation)
-      alert(`Ticket erstellt mit ID: ${ticket.id || 'unbekannt'}`)
-    } catch (err) {
-      alert('Fehler beim Erstellen des Tickets')
-    }
-  }
+  const [visible, setVisible] = useState(false)
 
   return (
     <div style={{ textAlign: 'left', marginTop: '0rem' }}>
-      <PrimaryButton onClick={handleClick}>
+      <Button onClick={() => setVisible(true)}>
         🎟️ Ticket erstellen
-      </PrimaryButton>
+      </Button>
+
+      {visible && (
+        <TicketPopup
+          activeChannel={activeChannel}
+          source={source}
+          onClose={() => setVisible(false)}
+        />
+      )}
     </div>
   )
 }

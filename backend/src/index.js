@@ -8,6 +8,8 @@ require('dotenv').config();
 // Import der Route
 const webhookRoutes = require('./routes/webhookRoutes');
 const replyRoutes = require('./routes/replyRoutes')
+const zammadRoutes = require('./routes/zammadRoutes');
+
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +36,11 @@ app.get('/', (req, res) => {
 
 // Antwort-Route einbinden
 app.use('/api', replyRoutes); // z. B. POST /api/reply
+
+//Ticket Route
+app.use('/api/zammad', zammadRoutes);
+
+
 
 // Webhook-Route einbinden
 app.use('/webhook', webhookRoutes(io)); // io wird weitergereicht an die Route

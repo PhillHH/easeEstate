@@ -1,20 +1,21 @@
 
 /**
  * Erstellt ein neues Ticket aus einer Konversation
+ 
  * @param {Object} conversation - Die Konversation, aus der das Ticket erstellt wird
  * @returns {Promise<Object>} - Das erstellte Ticket (oder Fehler)
  */
 export async function createTicketFromConversation(conversation) {
   const ticketPayload = {
-    title: `Ticket zu ${conversation.title || 'unbenanntem Kontakt'}`,
-    source: conversation.source,
-    channelId: conversation.id,
-    createdAt: new Date().toISOString(),
-    status: 'open',
+    title: conversation.title || 'Ticket ohne Titel',
+    message: conversation.description || 'Keine Nachricht angegeben.',
+    tags: conversation.tags || '',
+    group_id: parseInt(conversation.group_id) || undefined,
+    customer_id: parseInt(conversation.customer_id) || undefined
   }
 
   try {
-    const response = await fetch('/api/tickets', {
+    const response = await fetch('/api/zammad/tickets', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
