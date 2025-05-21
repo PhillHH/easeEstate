@@ -4,6 +4,7 @@ const {
   createTicket,
   getTicket,
   replyToTicket,
+  getAllTickets,        // ✅ HIER ergänzt!
   closeTicket
 } = require('../services/zammadClient');
 
@@ -14,6 +15,10 @@ router.post('/tickets', createTicket);
 
 // GET /api/zammad/tickets/:id → Ticketdetails abrufen
 router.get('/tickets/:id', getTicket);
+
+// GET /api/zammad/tickets → Alle Tickets abrufen
+router.get('/tickets', getAllTickets);
+
 
 // POST /api/zammad/tickets/:id/reply → Ticket beantworten
 router.post('/tickets/:id/reply', replyToTicket);

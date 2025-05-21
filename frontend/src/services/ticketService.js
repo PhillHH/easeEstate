@@ -47,3 +47,21 @@ export async function closeTicket(ticketId) {
     return false
   }
 }
+
+/**
+ * Holt alle Tickets vom Backend
+ * 
+// Sie verwendet den GET-Endpunkt /api/zammad/tickets.
+// Wenn etwas schiefläuft, wird ein leerer Array zurückgegeben.
+
+ */
+export async function getAllTickets() {
+  try {
+    const response = await fetch('/api/zammad/tickets')
+    if (!response.ok) throw new Error('Tickets konnten nicht geladen werden')
+    return await response.json()
+  } catch (error) {
+    console.error('[TicketService] Fehler beim Laden:', error)
+    return []
+  }
+}

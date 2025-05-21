@@ -97,9 +97,22 @@ async function closeTicket(req, res) {
   }
 }
 
+// 📋 Alle Tickets abrufen
+async function getAllTickets(req, res) {
+  try {
+    const response = await axios.get(`${BASE_URL}/tickets`, { headers });
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error('❌ Fehler beim Abrufen aller Tickets:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Tickets konnten nicht abgerufen werden' });
+  }
+}
+
+
 module.exports = {
   createTicket,
   getTicket,
+  getAllTickets,
   replyToTicket,
   closeTicket
 };

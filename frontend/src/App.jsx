@@ -5,6 +5,8 @@ import Settings from './pages/Settings'
 import Overview from './pages/Overview'
 import OpenTickets from './pages/OpenTickets'
 import ConversationsPage from './pages/ConversationsPage'
+import TicketList from './pages/TicketList' 
+
 
 // ➡️ Platzhalter-Komponenten
 const Requests = () => <h1>Anfragen-Seite</h1>
@@ -14,7 +16,7 @@ const Tickets = () => <h1>Tickets-Seite</h1>
 const routes = [
   { id: 'overview', label: 'Übersicht', component: Overview },
   { id: 'requests', label: 'Anfragen', component: Requests },
-  { id: 'tickets', label: 'Tickets', component: Tickets },
+  { id: 'open-tickets', label: 'Offene Tickets', component: TicketList },
   { id: 'dashboard', label: 'Dashboard', component: Dashboard },
   { id: 'settings', label: 'Settings', component: Settings },
   { id: 'open-tickets', label: 'Offene Tickets', component: OpenTickets }
