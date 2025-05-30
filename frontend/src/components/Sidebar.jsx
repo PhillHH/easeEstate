@@ -36,9 +36,11 @@ const Sidebar = ({ activeTab, setActiveTab, setActiveSource }) => { // <-- setAc
   ]
 
   const bottomMenuItems = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'settings', label: 'Settings' }
-  ]
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'settings', label: 'Settings' },
+  { id: 'process-tracker', label: 'Prozess-Tracker' } // <-- neu!
+]
+
 
   const toggleMenu = (id) => {
     setOpenMenu(openMenu === id ? null : id)

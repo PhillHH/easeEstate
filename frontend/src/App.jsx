@@ -6,6 +6,8 @@ import Overview from './pages/Overview'
 import OpenTickets from './pages/OpenTickets'
 import ConversationsPage from './pages/ConversationsPage'
 import TicketList from './pages/TicketList' 
+import ProcessTracker from './pages/ProcessTracker'
+
 
 
 // ➡️ Platzhalter-Komponenten
@@ -19,7 +21,9 @@ const routes = [
   { id: 'open-tickets', label: 'Offene Tickets', component: TicketList },
   { id: 'dashboard', label: 'Dashboard', component: Dashboard },
   { id: 'settings', label: 'Settings', component: Settings },
-  { id: 'open-tickets', label: 'Offene Tickets', component: OpenTickets }
+  { id: 'open-tickets', label: 'Offene Tickets', component: OpenTickets },
+  { id: 'process-tracker', label: 'Prozess-Tracker', component: ProcessTracker }
+
   // ❌ ConversationsPage kommt jetzt NICHT hier rein! (Sonderbehandlung)
 ]
 
