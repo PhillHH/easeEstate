@@ -2,29 +2,31 @@ import React from 'react'
 import Sidebar from '../components/Sidebar'
 import Topbar from '../components/Topbar'
 
-const MainLayout = ({ activeTab, setActiveTab, activeSource, setActiveSource, children }) => { // <-- setActiveSource hinzugefügt!
+const MainLayout = ({ activeTab, setActiveTab, activeSource, setActiveSource, children }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw' }}>
+    <div className="flex flex-col h-screen w-screen">
+
       
-      {/* Topbar über gesamte Breite */}
-      <div style={{ height: '60px', width: '100%', backgroundColor: '#333', color: '#fff', display: 'flex', alignItems: 'center', paddingLeft: '1rem' }}>
+      {/* 🔝 Topbar */}
+      <div className="h-[60px] w-full bg-[#333] text-white flex items-center pl-4">
         <Topbar />
       </div>
 
-      {/* Body: Sidebar + Content */}
-      <div style={{ display: 'flex', flex: 1 }}>
+      {/* 🔄 Sidebar + Content */}
+      <div className="flex flex-1">
         
-        {/* Sidebar */}
-        <div style={{ width: '200px', backgroundColor: '#f4f4f4', padding: '1rem 0' }}>
+        {/* 🧭 Sidebar – dunkel, keine Ränder */}
+        <div className="w-64 bg-[#1c1c22]">
           <Sidebar
             activeTab={activeTab}
             setActiveTab={setActiveTab}
-            setActiveSource={setActiveSource} // <-- jetzt sauber übergeben
+            activeSource={activeSource}
+            setActiveSource={setActiveSource}
           />
         </div>
 
-        {/* Main Content */}
-        <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+        {/* 📄 Main Content */}
+        <div className="flex-1 overflow-y-auto bg-[#24232a] p-6">
           {children}
         </div>
 
