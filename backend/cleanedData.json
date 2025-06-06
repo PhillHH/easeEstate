@@ -1,9 +1,9 @@
 {
-  "conversationId": 183,
-  "senderName": "webinar",
-  "email": "webinar@casavi.de",
-  "subject": "Wir haben Sie bei Prozesse skalieren – wie Marktführer mit casavi arbeiten vermisst.",
-  "messageContent": "Schade, dass Sie an unserem Webinar nicht teilnehmen konnten.\n\n\n\n\n***********************************************************\n\n    \nDiese E-Mail wurde von GoTo Webinar im Namen des Organisators der Veranstaltung gesendet. Wenn Sie die Datenschutzrichtlinie des Organisators einsehen, anwendbare Datenschutzrechte ausüben oder sich von anderen Mitteilungsoptionen des Organisators abmelden möchten, wenden Sie sich bitte direkt an den Organisator.\n    \n    \nE-Mails dieses Veranstaltungsorganisators abbestellen (https://attendee.gotowebinar.com/subscription.tmpl?organizer=4471618565338092837&token=P6jWigAX4waMbKeP964%2Fdw%3D%3D&organizerEmail=webinar%40casavi.de&attendeeEmail=phillip%40growento.com&locale=de_DE)\n\nSpam melden (https://attendee.gotowebinar.com/reportSpam.tmpl?organizer=4471618565338092837&token=P6jWigAX4waMbKeP964%2Fdw%3D%3D&userEmail=phillip%40growento.com&webinarId=419348419&webinarName=Prozesse+skalieren+%E2%80%93+wie+Marktf%C3%BChrer+mit+casavi+a...&organizerEmail=webinar%40casavi.de&locale=de_DE)\n\n\nGoTo, Inc. | 333 Summer Street | Boston, MA 02210\nDatenschutzerklärung: (https://www.goto.com/de/company/legal/privacy/us)\nAnti-Spam-Richtlinie (https://www.goto.com/de/company/legal/anti-spam-policy)\nwww.goto.com/webinar © 2025 GoTo, Inc. Alle Rechte vorbehalten.",
-  "timestamp": "2025-05-28T13:00:08+00:00",
+  "conversationId": 189,
+  "senderName": "rugullis.phillip",
+  "email": "rugullis.phillip@googlemail.com",
+  "subject": "Das ist ein Test",
+  "messageContent": "Das ist ein Test. Kommen Emails noch an ?\n",
+  "timestamp": "2025-06-01T21:54:35+02:00",
   "channel": "Channel::Email"
 }

@@ -38,6 +38,8 @@ const Sidebar = ({ activeTab, setActiveTab, setActiveSource }) => {
         { id: 'emails-phillip', label: 'E-Mails (phillip@growento.com)', icon: <Mail size={16} />, source: 'E-Mail' }
       ]
     },
+    
+
     {
       id: 'tickets',
       label: 'Tickets',

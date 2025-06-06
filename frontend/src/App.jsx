@@ -10,6 +10,8 @@ import ProcessTracker from './pages/ProcessTracker'
 
 
 
+
+
 // ➡️ Platzhalter-Komponenten
 const Requests = () => <h1>Anfragen-Seite</h1>
 const Tickets = () => <h1>Tickets-Seite</h1>
@@ -22,7 +24,9 @@ const routes = [
   { id: 'dashboard', label: 'Dashboard', component: Dashboard },
   { id: 'settings', label: 'Settings', component: Settings },
   { id: 'open-tickets', label: 'Offene Tickets', component: OpenTickets },
-  { id: 'process-tracker', label: 'Prozess-Tracker', component: ProcessTracker }
+  { id: 'process-tracker', label: 'Prozess-Tracker', component: ProcessTracker },
+
+
 
   // ❌ ConversationsPage kommt jetzt NICHT hier rein! (Sonderbehandlung)
 ]

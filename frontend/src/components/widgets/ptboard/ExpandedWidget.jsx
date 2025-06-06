@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import TimelineView from './TimelineView' // ✅ Timeline-Komponente importieren
 
 const ExpandedWidget = ({ widget, onClose }) => {
   return (
@@ -22,9 +23,13 @@ const ExpandedWidget = ({ widget, onClose }) => {
             </button>
           </div>
 
-          {/* 🔍 Hier kannst du je nach Widget-ID eigenen Inhalt anzeigen */}
+          {/* 🔍 Hier gezielt Inhalt je nach Widget anzeigen */}
           <div className="text-gray-300">
-            Inhalt für das Widget <strong>{widget}</strong> kommt hier hin.
+            {widget === 'timeline' ? (
+              <TimelineView />
+            ) : (
+              <p>Inhalt für das Widget <strong>{widget}</strong> kommt hier hin.</p>
+            )}
           </div>
         </div>
       </motion.div>
